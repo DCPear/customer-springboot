@@ -5,6 +5,7 @@ import lombok.*;
 import javax.persistence.*;
 import java.util.Date;
 
+@Table(name="customer")
 @Data
 @Entity
 @AllArgsConstructor
@@ -21,7 +22,13 @@ public class Customer {
     @Column
     private Date dob;
     @Column
-    @Enumerated
+    private String email;
+    @Column
+    private String phone;
+    @Column
+    private String address;
+    @Column
+    @Enumerated(EnumType.STRING)
     private Level level;
 
 }
