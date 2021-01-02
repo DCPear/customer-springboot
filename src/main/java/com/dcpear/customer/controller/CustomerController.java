@@ -1,6 +1,7 @@
 package com.dcpear.customer.controller;
 
 import com.dcpear.customer.domain.Customer;
+import com.dcpear.customer.domain.Level;
 import com.dcpear.customer.repo.CustomerRepository;
 import com.dcpear.customer.service.CustomerService;
 import org.slf4j.Logger;
@@ -24,6 +25,7 @@ public class CustomerController {
     @Autowired
     CustomerRepository customerRepository;
 
+    @Autowired
     private CustomerService customerService;
 
     @Autowired
@@ -55,8 +57,19 @@ public class CustomerController {
     }
 
     @GetMapping("/getCustomersByName/{lastName}")
-    public Collection<Customer> getCustomerLastName(@PathVariable("lastName") String lastName) {
-        return (Collection<Customer>) customerRepository.findAllByLastName(lastName);
+    public Collection<Customer> getCustomersByLastName(@PathVariable("lastName") String lastName) {
+        return customerRepository.findAllByLastName(lastName);
+    }
+
+    @GetMapping("/getCustomersByLevel/{level}")
+    public Collection<Customer> getCustomersByLevel(@PathVariable("level") Level level){
+        return customerRepository.findAllByLevel(level);
+    }
+
+    @GetMapping("/getNumberOf/{level}")
+    public long getNumbersByLevel(@PathVariable("level") Level level){
+        LOGGER.info("GET /{}/number", level);
+      return customerService.getLevelCount(level) ;
     }
 
     @PatchMapping("/updateCustomer/{id}")
