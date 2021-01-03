@@ -2,6 +2,10 @@ package com.dcpear.customer.controller;
 
 import com.dcpear.customer.domain.Level;
 import com.dcpear.customer.service.CustomerService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("count")
+@Tag(name = "customer count", description = "The customer count API")
 public class CustomerCountController {
     private static final Logger LOGGER = LoggerFactory.getLogger(CustomerCountController.class);
 
@@ -28,6 +33,8 @@ public class CustomerCountController {
     }
 
     @GetMapping("/getNumberOf/{level}")
+    @Operation(summary = "Get customer count by level")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public long getNumbersByLevel(@PathVariable("level") Level level){
         LOGGER.info("GET /{}/number", level);
         return customerService.getLevelCount(level) ;

@@ -1,5 +1,6 @@
-package com.dcpear.customer.domain;
+package com.dcpear.customer.service;
 
+import com.dcpear.customer.domain.Level;
 import com.dcpear.customer.service.CustomerService;
 import org.junit.Test;
 import org.junit.runner.RunWith;

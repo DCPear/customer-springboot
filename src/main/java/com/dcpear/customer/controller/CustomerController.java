@@ -4,6 +4,10 @@ import com.dcpear.customer.domain.Customer;
 import com.dcpear.customer.domain.Level;
 import com.dcpear.customer.repo.CustomerRepository;
 import com.dcpear.customer.service.CustomerService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +23,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/api")
+@Tag(name = "customer", description = "The customer API")
 public class CustomerController {
     private static final Logger LOGGER = LoggerFactory.getLogger(CustomerController.class);
 
@@ -27,6 +32,8 @@ public class CustomerController {
 
 
     @PostMapping("/addCustomers")
+    @Operation(summary = "Add a customer")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<Customer> createContact(@Validated @RequestBody Customer customer) throws URISyntaxException {
         LOGGER.info("add a customer");
         Customer result = customerRepository.save(customer);
@@ -34,30 +41,44 @@ public class CustomerController {
     }
 
     @GetMapping("/getCustomers")
+    @Operation(summary = "Get All customers")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public Collection<Customer> getCustomers() {
         LOGGER.info("get all customers");
         return (Collection<Customer>) customerRepository.findAll();
     }
 
     @GetMapping("/getCustomerById/{id}")
+    @Operation(summary = "Get customers by Id")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "404", description = "Customer not found")})
     public Customer getCustomer(@PathVariable("id") Integer id) {
         LOGGER.info("GET /getCustomerById/{}", id);
         return customerRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Id Not found"));
     }
 
     @GetMapping("/getCustomersByName/{lastName}")
+    @Operation(summary = "Get customers by last name")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "404", description = "Customer not found")})
     public Collection<Customer> getCustomersByLastName(@PathVariable("lastName") String lastName) {
         return customerRepository.findAllByLastName(lastName);
     }
 
     @GetMapping("/getCustomersByLevel/{level}")
-    public Collection<Customer> getCustomersByLevel(@PathVariable("level") Level level){
+    @Operation(summary = "Get customers by level")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "404", description = "Customer not found")})
+    public Collection<Customer> getCustomersByLevel(@PathVariable("level") Level level) {
         return customerRepository.findAllByLevel(level);
     }
 
     @PatchMapping("/updateCustomerLevel/{id}")
+    @Operation(summary = "Update customer level")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "404", description = "Customer not found")})
     public ResponseEntity<Customer> updateCustomerLevel(@PathVariable("id") Integer id,
-                          @Validated @RequestBody Customer customerDetails) throws ResourceNotFoundException {
+                                                        @Validated @RequestBody Customer customerDetails) throws ResourceNotFoundException {
         LOGGER.debug("PATCH /updateCustomerLevel/{}", id);
         Customer customer = customerRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Customer not found for this id :: " + id));
@@ -67,8 +88,11 @@ public class CustomerController {
     }
 
     @PatchMapping("/updateCustomerName/{id}")
+    @Operation(summary = "Update customer last name")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "404", description = "Customer not found")})
     public ResponseEntity<Customer> updateCustomerName(@PathVariable("id") Integer id,
-                                                   @Validated @RequestBody Customer customerDetails) throws ResourceNotFoundException {
+                                                       @Validated @RequestBody Customer customerDetails) throws ResourceNotFoundException {
         LOGGER.debug("PATCH /updateCustomerName/{}", id);
         Customer customer = customerRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Customer not found for this id :: " + id));
@@ -79,7 +103,10 @@ public class CustomerController {
 
 
     @DeleteMapping("/deleteCustomer/{id}")
-    public  ResponseEntity<Customer> deleteCustomer(@PathVariable(value = "id") Integer id)
+    @Operation(summary = "Delete customer")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "200", description = "OK")})
+    public ResponseEntity<Customer> deleteCustomer(@PathVariable(value = "id") Integer id)
             throws ResourceNotFoundException {
         LOGGER.debug("DELETE /deleteCustomer/{}", id);
         Customer customer = customerRepository.findById(id)
