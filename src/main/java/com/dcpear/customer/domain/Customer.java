@@ -1,10 +1,15 @@
 package com.dcpear.customer.domain;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+
 
 @Table(name="customer")
 @Data
@@ -24,6 +29,10 @@ public class Customer {
     @Column(nullable = false)
     private String lastName;
 
+    // generates "yyyy-MM-dd" output
+    @JsonSerialize(using = ToStringSerializer.class)
+// handles "yyyy-MM-dd" input just fine (note: "yyyy-M-d" format will not work)
+    @JsonDeserialize(using = LocalDateDeserializer.class)
     @Column
     private LocalDate dob;
 

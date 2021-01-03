@@ -18,24 +18,13 @@ import java.util.*;
 
 
 @RestController
-@RequestMapping("api")
+@RequestMapping("/api")
 public class CustomerController {
     private static final Logger LOGGER = LoggerFactory.getLogger(CustomerController.class);
 
     @Autowired
     CustomerRepository customerRepository;
 
-    @Autowired
-    private CustomerService customerService;
-
-    @Autowired
-    public void setCustomerService(CustomerService customerService) {
-        this.customerService = customerService;
-    }
-
-    public long getCount() {
-        return customerService.getCustomerCount();
-    }
 
     @PostMapping("/addCustomers")
     public ResponseEntity<Customer> createContact(@Validated @RequestBody Customer customer) throws URISyntaxException {
@@ -66,22 +55,28 @@ public class CustomerController {
         return customerRepository.findAllByLevel(level);
     }
 
-    @GetMapping("/getNumberOf/{level}")
-    public long getNumbersByLevel(@PathVariable("level") Level level){
-        LOGGER.info("GET /{}/number", level);
-      return customerService.getLevelCount(level) ;
-    }
-
-    @PatchMapping("/updateCustomer/{id}")
-    public ResponseEntity<Customer> updateCustomer(@PathVariable("id") Integer id,
+    @PatchMapping("/updateCustomerLevel/{id}")
+    public ResponseEntity<Customer> updateCustomerLevel(@PathVariable("id") Integer id,
                           @Validated @RequestBody Customer customerDetails) throws ResourceNotFoundException {
-        LOGGER.debug("PATCH /updateCustomer/{}", id);
+        LOGGER.debug("PATCH /updateCustomerLevel/{}", id);
         Customer customer = customerRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Customer not found for this id :: " + id));
         customer.setLevel(customerDetails.getLevel());
         final Customer result = customerRepository.save(customer);
         return ResponseEntity.ok().body(result);
     }
+
+    @PatchMapping("/updateCustomerName/{id}")
+    public ResponseEntity<Customer> updateCustomerName(@PathVariable("id") Integer id,
+                                                   @Validated @RequestBody Customer customerDetails) throws ResourceNotFoundException {
+        LOGGER.debug("PATCH /updateCustomerName/{}", id);
+        Customer customer = customerRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Customer not found for this id :: " + id));
+        customer.setLastName(customerDetails.getLastName());
+        final Customer result = customerRepository.save(customer);
+        return ResponseEntity.ok().body(result);
+    }
+
 
     @DeleteMapping("/deleteCustomer/{id}")
     public  ResponseEntity<Customer> deleteCustomer(@PathVariable(value = "id") Integer id)
