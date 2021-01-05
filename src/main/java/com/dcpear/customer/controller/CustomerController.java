@@ -22,7 +22,7 @@ import java.util.*;
 
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("api")
 @Tag(name = "customer", description = "The customer API")
 public class CustomerController {
     private static final Logger LOGGER = LoggerFactory.getLogger(CustomerController.class);
@@ -31,7 +31,7 @@ public class CustomerController {
     CustomerRepository customerRepository;
 
 
-    @PostMapping("/addCustomers")
+    @PostMapping("public/addCustomer")
     @Operation(summary = "Add a customer")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<Customer> createContact(@Validated @RequestBody Customer customer) throws URISyntaxException {
@@ -48,7 +48,7 @@ public class CustomerController {
         return (Collection<Customer>) customerRepository.findAll();
     }
 
-    @GetMapping("/getCustomerById/{id}")
+    @GetMapping("public/getCustomerById/{id}")
     @Operation(summary = "Get customers by Id")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "404", description = "Customer not found")})

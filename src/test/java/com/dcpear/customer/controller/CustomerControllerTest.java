@@ -32,6 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 public class CustomerControllerTest {
 
+    private static final String COMMON_URL = "/api";
     private MockMvc mockMvc;
 
     @Autowired
@@ -53,7 +54,7 @@ public class CustomerControllerTest {
      * @throws Exception
      */
     @Test
-    public void addCustomersTest() throws Exception {
+    public void addCustomerTest() throws Exception {
 
         Customer customer = new Customer(
                 3,
@@ -69,7 +70,7 @@ public class CustomerControllerTest {
         String jsonRequest = objectMapper.writeValueAsString(customer);
 
         MvcResult result = mockMvc.perform(
-                post("/api/addCustomers")
+                post("/api/public/addCustomer")
                         .content(jsonRequest)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -108,7 +109,7 @@ public class CustomerControllerTest {
     public void getCustomersByIdTest() throws Exception {
 
         MvcResult result = mockMvc.perform(
-                get("/api/getCustomerById/{id}", 1)
+                get("/api/public/getCustomerById/{id}", 1)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value("1"))
