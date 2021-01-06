@@ -2,6 +2,7 @@ package com.dcpear.customer.controller;
 
 import com.dcpear.customer.domain.Customer;
 import com.dcpear.customer.domain.Level;
+import com.dcpear.customer.service.JwtRequestHelper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Assert;
 import org.junit.Before;
@@ -9,8 +10,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.*;
 import org.springframework.mock.web.MockServletContext;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -23,6 +26,7 @@ import javax.transaction.Transactional;
 import java.time.LocalDate;
 
 
+import static org.junit.Assert.assertEquals;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.jsonPath;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -39,6 +43,12 @@ public class CustomerControllerTest {
     private WebApplicationContext wac;
 
     ObjectMapper objectMapper = new ObjectMapper();
+
+    @Autowired
+    private JwtRequestHelper jwtRequestHelper;
+
+    @Autowired
+    private TestRestTemplate restTemplate;
 
     /**
      * Initialise MockMvc (so that we don't need to initialize it inside every test.)
@@ -85,11 +95,15 @@ public class CustomerControllerTest {
      *
      * @throws Exception
      */
+    @WithMockUser(authorities={"ROLE_CSR"})
     @Test
-    public void getCustomersTest() throws Exception {
+    public void getCustomersTest1() throws Exception {
+
+        String  accessToken = jwtRequestHelper.tokenWithRole("ROLE_CSR");
 
         MvcResult result = mockMvc.perform(
                 get("/api/getCustomers")
+                        .header("Authorization", "Bearer " + accessToken)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.[0]").exists())
@@ -98,6 +112,20 @@ public class CustomerControllerTest {
                 .andReturn();
 
         Assert.assertEquals("application/json", result.getResponse().getContentType());
+    }
+
+    /**
+     * Integration Test for Get method Get Customers
+     *
+     * @throws Exception
+     */
+    @Test
+    public void getCustomersTest() throws Exception {
+
+        String CALL_URL = COMMON_URL+"/getCustomers";
+        HttpEntity<String> request = new HttpEntity<>(jwtRequestHelper.httpHeaderWithRole("ROLE_CSR"));
+        ResponseEntity<String> response = restTemplate.exchange(CALL_URL, HttpMethod.GET ,request,String.class );
+        assertEquals((HttpStatus.OK),response.getStatusCode());
     }
 
     /**
@@ -110,7 +138,7 @@ public class CustomerControllerTest {
 
         MvcResult result = mockMvc.perform(
                 get("/api/public/getCustomerById/{id}", 1)
-                        .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value("1"))
                 .andReturn();
@@ -123,11 +151,14 @@ public class CustomerControllerTest {
      *
      * @throws Exception
      */
+    @WithMockUser(authorities={"ROLE_CSR"})
     @Test
     public void getCustomersByNameTest() throws Exception {
 
+        String  accessToken = jwtRequestHelper.tokenWithRole("ROLE_CSR");
         MvcResult result = mockMvc.perform(
                 get("/api/getCustomersByName/{lastName}", "Doe")
+                        .header("Authorization", "Bearer " + accessToken)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.[*].lastName").value("Doe"))
@@ -141,11 +172,14 @@ public class CustomerControllerTest {
      *
      * @throws Exception
      */
+    @WithMockUser(authorities={"ROLE_CSR"})
     @Test
     public void getCustomersByLevelTest() throws Exception {
 
+        String  accessToken = jwtRequestHelper.tokenWithRole("ROLE_CSR");
         MvcResult result = mockMvc.perform(
                 get("/api/getCustomersByLevel/{level}", "Gold")
+                        .header("Authorization", "Bearer " + accessToken)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.[*].level").value("Gold"))
@@ -159,6 +193,7 @@ public class CustomerControllerTest {
      *
      * @throws Exception
      */
+    @WithMockUser(authorities={"ROLE_CSR"})
     @Test
     public void updateCustomerLevelTest() throws Exception {
 
@@ -193,6 +228,7 @@ public class CustomerControllerTest {
      *
      * @throws Exception
      */
+    @WithMockUser(authorities={"ROLE_CSR"})
     @Test
     public void updateCustomerNameTest() throws Exception {
 
@@ -221,19 +257,21 @@ public class CustomerControllerTest {
 
         Assert.assertEquals("application/json", result.getResponse().getContentType());
     }
+
     /**
      * Integration Test for Delete method Delete Customers
      *
      * @throws Exception
      */
+    @WithMockUser(authorities={"ROLE_ADMIN"})
     @Test
     public void deleteCustomerTest() throws Exception {
 
         mockMvc.perform(
                 delete("/api/deleteCustomer/{id}", "1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
-             .andExpect(status().is2xxSuccessful());
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful());
     }
 
 }

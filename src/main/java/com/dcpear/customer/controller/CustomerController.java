@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,6 +42,7 @@ public class CustomerController {
     }
 
     @GetMapping("/getCustomers")
+    @PreAuthorize("hasAnyRole('ROLE_CSR','ROLE_ADMIN')")
     @Operation(summary = "Get All customers")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public Collection<Customer> getCustomers() {
@@ -58,6 +60,7 @@ public class CustomerController {
     }
 
     @GetMapping("/getCustomersByName/{lastName}")
+    @PreAuthorize("hasAnyRole('ROLE_CSR','ROLE_ADMIN')")
     @Operation(summary = "Get customers by last name")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "404", description = "Customer not found")})
@@ -66,6 +69,7 @@ public class CustomerController {
     }
 
     @GetMapping("/getCustomersByLevel/{level}")
+    @PreAuthorize("hasAnyRole('ROLE_CSR','ROLE_ADMIN')")
     @Operation(summary = "Get customers by level")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "404", description = "Customer not found")})
@@ -74,6 +78,7 @@ public class CustomerController {
     }
 
     @PatchMapping("/updateCustomerLevel/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_CSR','ROLE_ADMIN')")
     @Operation(summary = "Update customer level")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "404", description = "Customer not found")})
@@ -88,6 +93,7 @@ public class CustomerController {
     }
 
     @PatchMapping("/updateCustomerName/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_CSR','ROLE_ADMIN')")
     @Operation(summary = "Update customer last name")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "404", description = "Customer not found")})
@@ -103,6 +109,7 @@ public class CustomerController {
 
 
     @DeleteMapping("/deleteCustomer/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Delete customer")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "200", description = "OK")})
