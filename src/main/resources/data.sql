@@ -22,13 +22,12 @@ insert into customer(first_Name, last_Name,  dob,  email, phone, address, level)
 
 -- Security data
 -- USER
--- hashed password: letmein
+-- hashed password: mypassword
 INSERT INTO security_user (id, username, password, first_name, last_name) VALUES
-(1,  'admin', '$2y$12$LtJY9Q5.U3IK0jBeZokkueMzbbWjMVSE2uN49GkeX.fGGIA5QBRUe', 'Administrator', 'Adminstrator'),
-(2,  'Hazel', '$2y$12$LtJY9Q5.U3IK0jBeZokkueMzbbWjMVSE2uN49GkeX.fGGIA5QBRUe', 'Hazel', 'Nutt'),
-(3,  'Clark', '$2y$12$LtJY9Q5.U3IK0jBeZokkueMzbbWjMVSE2uN49GkeX.fGGIA5QBRUe', 'Clark', 'Kent'),
-(4,  'Frank', '$2y$12$LtJY9Q5.U3IK0jBeZokkueMzbbWjMVSE2uN49GkeX.fGGIA5QBRUe', 'Frank', 'Furter');
-
+(1,  'admin', '$2a$12$tkAwgt7IPcRHrhXGeOQIwehIe0t4m8yPxAe56.kqrCUSk6Xhpxada', 'Administrator', 'Adminstrator'),
+(2,  'Hazel', '$2a$12$tkAwgt7IPcRHrhXGeOQIwehIe0t4m8yPxAe56.kqrCUSk6Xhpxada', 'Hazel', 'Nutt'),
+(3,  'Clark', '$2a$12$tkAwgt7IPcRHrhXGeOQIwehIe0t4m8yPxAe56.kqrCUSk6Xhpxada', 'Clark', 'Kent'),
+(4,  'Frank', '$2a$12$tkAwgt7IPcRHrhXGeOQIwehIe0t4m8yPxAe56.kqrCUSk6Xhpxada', 'Frank', 'Furter');
 -- ROLES
 
 INSERT INTO security_role (id, role_name, description) VALUES (1, 'ROLE_ADMIN', 'Administrator');
@@ -37,7 +36,7 @@ INSERT INTO security_role (id, role_name, description) VALUES (2, 'ROLE_CSR', 'C
 --USER ROLE MAPPING
 INSERT INTO user_role(user_id, role_id) VALUES
  (1, 1), -- give admin ROLE_ADMIN
- (2, 2),  -- give Jane ROLE_CSR
- (3, 2),  -- give Mark ROLE_CSR
- (4, 1),  -- give Wally ROLE_ADMIN
- (4, 2);  -- give Wally ROLE_CSR
+ (2, 2),  -- give Hazel ROLE_CSR
+ (3, 2),  -- give Clark ROLE_CSR
+ (4, 1),  -- give Frank ROLE_ADMIN
+ (4, 2);  -- give Frank ROLE_CSR
